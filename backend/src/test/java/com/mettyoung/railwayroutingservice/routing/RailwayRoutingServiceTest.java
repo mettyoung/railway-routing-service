@@ -179,4 +179,97 @@ public class RailwayRoutingServiceTest {
                 )
         ));
     }
+
+    @Test
+    public void should_provide_three_routes_from_start_to_end_given_a_graph_with_three_unequal_path_and_two_dead_ends_and_one_cycle() {
+        Station one = new Station("one");
+        Station two = new Station("two");
+        Station three = new Station("three");
+        Station four = new Station("four");
+        Station dangledFour = new Station("dangledFour");
+        Station five = new Station("five");
+        Station six = new Station("six");
+        Station dangledSix = new Station("dangledSix");
+        Station seven = new Station("seven");
+        Station eight = new Station("eight");
+        Station nine = new Station("nine");
+        Station ten = new Station("ten");
+
+        Railway railway = new Railway()
+                .addStation(one)
+                .addStation(two)
+                .addStation(three)
+                .addStation(four)
+                .addStation(five)
+                .addStation(six)
+                .addStation(seven)
+                .addStation(dangledFour)
+                .addStation(dangledSix)
+                .addStation(eight)
+                .addStation(nine)
+                .addStation(ten)
+                .addConnection(one, two)
+                .addConnection(one, three)
+                .addConnection(one, four)
+                .addConnection(two, five)
+                .addConnection(three, six)
+                .addConnection(four, seven)
+                .addConnection(four, dangledFour)
+                .addConnection(six, five)
+                .addConnection(six, dangledSix)
+                .addConnection(seven, eight)
+                .addConnection(eight, five)
+                .addConnection(eight, nine)
+                .addConnection(eight, ten);
+
+        RailwayRoutingService railwayRoutingService = new RailwayRoutingService(railway);
+        List<RailwayPath> paths = railwayRoutingService.computePaths("one", "five");
+
+        assertThat(paths, hasSize(3));
+        assertThat(paths.get(0).getRailwayEdges(), hasSize(2));
+        assertThat(paths.get(0).getRailwayEdges(), contains(
+                allOf(
+                        hasProperty("startStation", sameInstance(one)),
+                        hasProperty("endStation", sameInstance(two))
+                ),
+                allOf(
+                        hasProperty("startStation", sameInstance(two)),
+                        hasProperty("endStation", sameInstance(five))
+                )
+        ));
+        assertThat(paths.get(1).getRailwayEdges(), hasSize(3));
+        assertThat(paths.get(1).getRailwayEdges(), contains(
+                allOf(
+                        hasProperty("startStation", sameInstance(one)),
+                        hasProperty("endStation", sameInstance(three))
+                ),
+                allOf(
+                        hasProperty("startStation", sameInstance(three)),
+                        hasProperty("endStation", sameInstance(six))
+                ),
+                allOf(
+                        hasProperty("startStation", sameInstance(six)),
+                        hasProperty("endStation", sameInstance(five))
+                )
+        ));
+        assertThat(paths.get(2).getRailwayEdges(), hasSize(4));
+        assertThat(paths.get(2).getRailwayEdges(), contains(
+                allOf(
+                        hasProperty("startStation", sameInstance(one)),
+                        hasProperty("endStation", sameInstance(four))
+                ),
+                allOf(
+                        hasProperty("startStation", sameInstance(four)),
+                        hasProperty("endStation", sameInstance(seven))
+                ),
+                allOf(
+                        hasProperty("startStation", sameInstance(seven)),
+                        hasProperty("endStation", sameInstance(eight))
+                ),
+                allOf(
+                        hasProperty("startStation", sameInstance(eight)),
+                        hasProperty("endStation", sameInstance(five))
+                )
+        ));
+    }
 }
