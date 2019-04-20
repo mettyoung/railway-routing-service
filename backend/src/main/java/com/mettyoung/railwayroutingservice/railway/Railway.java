@@ -24,4 +24,10 @@ public class Railway {
     public Set<Station> findStations(String name) {
         return graph.get(name);
     }
+
+    public Railway addConnection(Station first, Station second) {
+        first.addAdjacentStation(second);
+        second.addAdjacentStation(first);
+        return this;
+    }
 }

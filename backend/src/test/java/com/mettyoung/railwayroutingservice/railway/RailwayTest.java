@@ -32,4 +32,15 @@ public class RailwayTest {
         assertThat(railway.findStations("group"), hasSize(2));
         assertThat(railway.findStations("group"), hasItems(sameInstance(one), sameInstance(two)));
     }
+
+    @Test
+    public void should_be_able_to_create_a_railway_given_two_adjacent_stations() {
+        Station one = new Station("one", "any");
+        Station two = new Station("two", "any");
+
+        new Railway().addConnection(one, two);
+
+        assertThat(one.getAdjacentStations(), hasItem(sameInstance(two)));
+        assertThat(two.getAdjacentStations(), hasItem(sameInstance(one)));
+    }
 }
