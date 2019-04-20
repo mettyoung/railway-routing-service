@@ -122,4 +122,61 @@ public class RailwayRoutingServiceTest {
         ));
     }
 
+    @Test
+    public void should_provide_two_routes_from_start_to_end_given_a_graph_with_two_unequal_paths() {
+        Station one = new Station("one");
+        Station two = new Station("two");
+        Station three = new Station("three");
+        Station four = new Station("four");
+        Station five = new Station("five");
+        Station six = new Station("six");
+        Railway railway = new Railway()
+                .addStation(one)
+                .addStation(two)
+                .addStation(three)
+                .addStation(four)
+                .addStation(five)
+                .addStation(six)
+                .addConnection(one, two)
+                .addConnection(one, three)
+                .addConnection(two, four)
+                .addConnection(three, six)
+                .addConnection(four, five)
+                .addConnection(five, six);
+
+        RailwayRoutingService railwayRoutingService = new RailwayRoutingService(railway);
+        List<RailwayPath> paths = railwayRoutingService.computePaths("one", "six");
+
+        assertThat(paths, hasSize(2));
+        assertThat(paths.get(0).getRailwayEdges(), hasSize(2));
+        assertThat(paths.get(0).getRailwayEdges(), contains(
+                allOf(
+                        hasProperty("startStation", sameInstance(one)),
+                        hasProperty("endStation", sameInstance(three))
+                ),
+                allOf(
+                        hasProperty("startStation", sameInstance(three)),
+                        hasProperty("endStation", sameInstance(six))
+                )
+        ));
+        assertThat(paths.get(1).getRailwayEdges(), hasSize(4));
+        assertThat(paths.get(1).getRailwayEdges(), contains(
+                allOf(
+                        hasProperty("startStation", sameInstance(one)),
+                        hasProperty("endStation", sameInstance(two))
+                ),
+                allOf(
+                        hasProperty("startStation", sameInstance(two)),
+                        hasProperty("endStation", sameInstance(four))
+                ),
+                allOf(
+                        hasProperty("startStation", sameInstance(four)),
+                        hasProperty("endStation", sameInstance(five))
+                ),
+                allOf(
+                        hasProperty("startStation", sameInstance(five)),
+                        hasProperty("endStation", sameInstance(six))
+                )
+        ));
+    }
 }

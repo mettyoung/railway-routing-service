@@ -40,7 +40,9 @@ public class RailwayRoutingService {
                     if (!trail.containsKey(next)) {
                         trail.put(next, new ArrayList<>());
                     }
-                    frontier.add(next);
+                    if (!target.equals(next)) {
+                        frontier.add(next);
+                    }
                     trail.get(next).add(current);
                 }
             }
