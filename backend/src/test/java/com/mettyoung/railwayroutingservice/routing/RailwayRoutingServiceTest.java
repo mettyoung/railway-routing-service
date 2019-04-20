@@ -77,4 +77,49 @@ public class RailwayRoutingServiceTest {
                 )
         ));
     }
+
+    @Test
+    public void should_provide_two_routes_from_start_to_end_given_a_graph_with_two_paths() {
+        Station one = new Station("one");
+        Station two = new Station("two");
+        Station three = new Station("three");
+        Station four = new Station("four");
+        Railway railway = new Railway()
+                .addStation(one)
+                .addStation(two)
+                .addStation(three)
+                .addStation(four)
+                .addConnection(one, two)
+                .addConnection(one, three)
+                .addConnection(two, four)
+                .addConnection(three, four);
+
+        RailwayRoutingService railwayRoutingService = new RailwayRoutingService(railway);
+        List<RailwayPath> paths = railwayRoutingService.computePaths("one", "four");
+
+        assertThat(paths, hasSize(2));
+        assertThat(paths.get(0).getRailwayEdges(), hasSize(2));
+        assertThat(paths.get(0).getRailwayEdges(), contains(
+                allOf(
+                        hasProperty("startStation", sameInstance(one)),
+                        hasProperty("endStation", sameInstance(two))
+                ),
+                allOf(
+                        hasProperty("startStation", sameInstance(two)),
+                        hasProperty("endStation", sameInstance(four))
+                )
+        ));
+        assertThat(paths.get(1).getRailwayEdges(), hasSize(2));
+        assertThat(paths.get(1).getRailwayEdges(), contains(
+                allOf(
+                        hasProperty("startStation", sameInstance(one)),
+                        hasProperty("endStation", sameInstance(three))
+                ),
+                allOf(
+                        hasProperty("startStation", sameInstance(three)),
+                        hasProperty("endStation", sameInstance(four))
+                )
+        ));
+    }
+
 }
