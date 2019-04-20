@@ -1,11 +1,15 @@
 package com.mettyoung.railwayroutingservice.railway;
 
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.ToString;
 
 import java.util.LinkedList;
 import java.util.List;
 
 @Getter
+@EqualsAndHashCode(of = "code")
+@ToString(of = "code")
 public class Station {
 
     private String code;
