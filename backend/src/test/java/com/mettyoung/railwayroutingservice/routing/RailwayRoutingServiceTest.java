@@ -15,9 +15,9 @@ public class RailwayRoutingServiceTest {
 
     @Test
     public void should_provide_a_route_from_start_to_end_given_one_path_of_3_stations() {
-        Station one = new Station("one", "one");
-        Station two = new Station("two", "two");
-        Station three = new Station("three", "three");
+        Station one = new Station("one");
+        Station two = new Station("two");
+        Station three = new Station("three");
         Railway railway = new Railway()
                 .addStation(one)
                 .addStation(two)
@@ -25,10 +25,8 @@ public class RailwayRoutingServiceTest {
                 .addConnection(one, two)
                 .addConnection(two, three);
 
-        List<RailwayPath> paths = RailwayRoutingService.computePaths(
-                railway.findStations("one"),
-                railway.findStations("three")
-        );
+        RailwayRoutingService railwayRoutingService = new RailwayRoutingService(railway);
+        List<RailwayPath> paths = railwayRoutingService.computePaths("one", "three");
 
         assertThat(paths, hasSize(1));
         assertThat(paths.get(0).getRailwayEdges(), hasSize(2));

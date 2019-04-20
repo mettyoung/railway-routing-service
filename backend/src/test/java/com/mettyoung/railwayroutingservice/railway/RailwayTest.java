@@ -8,39 +8,31 @@ import static org.junit.Assert.*;
 public class RailwayTest {
 
     @Test
-    public void should_be_able_to_get_one_station_from_railway_given_one_station_in_a_station_name() {
-        Station one = new Station("one", "group");
+    public void should_be_able_to_get_one_station_from_railway_given_station_name() {
+        Station one = new Station("code", "one");
+        Station two = new Station("two");
 
-        Railway railway = new Railway();
-        railway.addStation(one);
+        Railway railway = new Railway()
+                .addStation(one)
+                .addStation(two);
 
-        assertThat(railway.findStations("group"), hasSize(1));
-        assertThat(railway.findStations("group"), hasItem(sameInstance(one)));
-    }
-
-    @Test
-    public void should_be_able_to_get_two_stations_from_railway_given_two_stations_having_the_same_station_name() {
-        Station one = new Station("one", "group");
-        Station two = new Station("two", "group");
-        Station three = new Station("three", "another-group");
-
-        Railway railway = new Railway();
-        railway.addStation(one)
-                .addStation(two)
-                .addStation(three);
-
-        assertThat(railway.findStations("group"), hasSize(2));
-        assertThat(railway.findStations("group"), hasItems(sameInstance(one), sameInstance(two)));
+        assertThat(railway.findStation("one"), sameInstance(one));
+        assertThat(railway.findStation("two"), sameInstance(two));
     }
 
     @Test
     public void should_be_able_to_create_a_railway_given_two_adjacent_stations() {
-        Station one = new Station("one", "any");
-        Station two = new Station("two", "any");
+        Station one = new Station("one");
+        Station two = new Station("two");
 
-        new Railway().addConnection(one, two);
+        Railway railway = new Railway()
+                .addStation(one)
+                .addStation(two)
+                .addConnection(one, two);
 
-        assertThat(one.getAdjacentStations(), hasItem(sameInstance(two)));
-        assertThat(two.getAdjacentStations(), hasItem(sameInstance(one)));
+        assertThat(railway.getAdjacentStations(one), hasSize(1));
+        assertThat(railway.getAdjacentStations(one), hasItem(sameInstance(two)));
+        assertThat(railway.getAdjacentStations(two), hasSize(1));
+        assertThat(railway.getAdjacentStations(two), hasItem(sameInstance(one)));
     }
 }

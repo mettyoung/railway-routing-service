@@ -11,9 +11,15 @@ import java.util.Queue;
 
 public class RailwayRoutingService {
 
-    public static List<RailwayPath> computePaths(List<Station> origins, List<Station> goals) {
-        Station origin = origins.get(0);
-        Station goal = goals.get(0);
+    private Railway railway;
+
+    public RailwayRoutingService(Railway railway) {
+        this.railway = railway;
+    }
+
+    public List<RailwayPath> computePaths(String originStationName, String targetStationName) {
+        Station origin = railway.findStation(originStationName);
+        Station target = railway.findStation(targetStationName);
 
         Queue<Station> frontier = new LinkedList<>();
         Map<Station, Station> cameFrom = new HashMap<>();
@@ -24,7 +30,7 @@ public class RailwayRoutingService {
         while (!frontier.isEmpty()) {
             Station current = frontier.remove();
 
-            for (Station next : current.getAdjacentStations()) {
+            for (Station next : railway.getAdjacentStations(current)) {
                 if (!cameFrom.containsKey(next)) {
                     frontier.add(next);
                     cameFrom.put(next, current);
@@ -32,7 +38,7 @@ public class RailwayRoutingService {
             }
         }
 
-        Station current = goal;
+        Station current = target;
         List<RailwayEdge> edges = new ArrayList<>();
         while (cameFrom.size() > 1 && !current.equals(origin)) {
             Station trailingStation = cameFrom.get(current);

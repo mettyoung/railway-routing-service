@@ -7,27 +7,31 @@ import java.util.Map;
 
 public class Railway {
 
-    private Map<String, List<Station>> graph;
+    private Map<Station, List<Station>> adjacencyList;
+    private Map<String, Station> stationByName;
 
     public Railway() {
-        graph = new HashMap<>();
+        adjacencyList = new HashMap<>();
+        stationByName = new HashMap<>();
     }
 
     public Railway addStation(Station station) {
-        if (!graph.containsKey(station.getName())) {
-            graph.put(station.getName(), new ArrayList<>());
-        }
-        graph.get(station.getName()).add(station);
+        adjacencyList.put(station, new ArrayList<>());
+        stationByName.put(station.getName(), station);
         return this;
-    }
-
-    public List<Station> findStations(String name) {
-        return graph.get(name);
     }
 
     public Railway addConnection(Station first, Station second) {
-        first.addAdjacentStation(second);
-        second.addAdjacentStation(first);
+        adjacencyList.get(first).add(second);
+        adjacencyList.get(second).add(first);
         return this;
+    }
+
+    public List<Station> getAdjacentStations(Station station) {
+        return adjacencyList.get(station);
+    }
+
+    public Station findStation(String stationName) {
+        return stationByName.get(stationName);
     }
 }
