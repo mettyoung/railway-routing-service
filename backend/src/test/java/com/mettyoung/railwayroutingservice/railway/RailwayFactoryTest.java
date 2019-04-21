@@ -13,6 +13,7 @@ public class RailwayFactoryTest {
     private final Station NS1 = new Station("NS1", "Jurong East");
     private final Station NS2 = new Station("NS2", "Bukit Batok");
     private final Station NS3 = new Station("NS3", "Bukit Gombak");
+    private final Station NS10 = new Station("NS10", "Bukit Gombak");
     private final Station CC21 = new Station("CC21", "Holland Village");
     private final Station CC22 = new Station("CC22", "Buona Vista");
     private final Station CC23 = new Station("CC23", "one-north");
@@ -45,5 +46,15 @@ public class RailwayFactoryTest {
 
         assertThat(railway.getAdjacentStations(CC22), contains(sameInstance(CC21), sameInstance(CC23), sameInstance(EW21)));
         assertThat(railway.getAdjacentStations(EW21), contains(sameInstance(EW20), sameInstance(CC22)));
+    }
+
+    @Test
+    public void should_create_a_railway_whose_connections_are_derived_sequentially_with_skipping_numbers() {
+        Railway railway = RailwayFactory.buildRailway(Arrays.asList(NS1, NS10, NS3, NS2));
+
+        assertThat(railway.getAdjacentStations(NS1), contains(sameInstance(NS2)));
+        assertThat(railway.getAdjacentStations(NS2), contains(sameInstance(NS1), sameInstance(NS3)));
+        assertThat(railway.getAdjacentStations(NS3), contains(sameInstance(NS2), sameInstance(NS10)));
+        assertThat(railway.getAdjacentStations(NS10), contains(sameInstance(NS3)));
     }
 }

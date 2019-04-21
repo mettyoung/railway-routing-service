@@ -40,6 +40,7 @@ public class Station extends AbstractBeanField<ZonedDateTime> implements Compara
     private ZonedDateTime openingDate;
 
     private String line;
+    private Integer number;
 
     public Station(String code, String name) {
         setCode(code);
@@ -57,6 +58,7 @@ public class Station extends AbstractBeanField<ZonedDateTime> implements Compara
         }
         this.code = code;
         this.line = code.substring(0, 2);
+        this.number = Integer.valueOf(code.substring(2));
     }
 
     @Override
@@ -65,8 +67,12 @@ public class Station extends AbstractBeanField<ZonedDateTime> implements Compara
     }
 
     @Override
-    public int compareTo(Station o) {
-        return getCode().compareTo(o.getCode());
+    public int compareTo(Station other) {
+        int alphabeticalOrder = line.compareTo(other.line);
+        if (alphabeticalOrder == 0) {
+            return number.compareTo(other.number);
+        }
+        return alphabeticalOrder;
     }
 
     public boolean sameLineWith(Station otherStation) {
