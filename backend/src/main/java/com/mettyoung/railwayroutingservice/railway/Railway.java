@@ -49,4 +49,8 @@ public class Railway {
     public List<Station> getAllStations() {
         return adjacencyList.entrySet().stream().map(Map.Entry::getKey).collect(toList());
     }
+
+    public boolean isStationNameExisting(String stationName) {
+        return stationsByName.containsKey(stationName);
+    }
 }
