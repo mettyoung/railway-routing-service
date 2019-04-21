@@ -12,4 +12,8 @@ public class RailwayEdge {
         this.startStation = startStation;
         this.endStation = endStation;
     }
+
+    public boolean atJunction() {
+        return startStation.getName().equals(endStation.getName());
+    }
 }
