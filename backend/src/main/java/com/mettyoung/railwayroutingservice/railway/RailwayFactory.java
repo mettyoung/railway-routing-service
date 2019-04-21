@@ -20,6 +20,15 @@ public class RailwayFactory {
             }
         }
 
+        for (Station station: railway.getAllStations()) {
+            List<Station> candidateJunctionStations = railway.findStations(station.getName());
+            if (candidateJunctionStations.size() > 1) {
+                for (int i = 1; i < candidateJunctionStations.size(); i++) {
+                    railway.addConnection(candidateJunctionStations.get(i - 1), candidateJunctionStations.get(i));
+                }
+            }
+        }
+
         return railway;
     }
 }

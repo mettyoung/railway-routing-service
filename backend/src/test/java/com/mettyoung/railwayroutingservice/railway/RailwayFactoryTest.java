@@ -36,6 +36,14 @@ public class RailwayFactoryTest {
 
         assertThat(railway.getAdjacentStations(EW19), contains(sameInstance(EW20)));
         assertThat(railway.getAdjacentStations(EW20), contains(sameInstance(EW19), sameInstance(EW21)));
-        assertThat(railway.getAdjacentStations(EW21), contains(sameInstance(EW20)));
+        assertThat(railway.getAdjacentStations(EW21), hasItems(sameInstance(EW20)));
+    }
+
+    @Test
+    public void should_create_a_railway_whose_stations_are_joined_by_the_same_station_name() {
+        Railway railway = RailwayFactory.buildRailway(stations);
+
+        assertThat(railway.getAdjacentStations(CC22), contains(sameInstance(CC21), sameInstance(CC23), sameInstance(EW21)));
+        assertThat(railway.getAdjacentStations(EW21), contains(sameInstance(EW20), sameInstance(CC22)));
     }
 }
