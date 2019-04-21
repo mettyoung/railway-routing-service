@@ -9,18 +9,16 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 import java.time.LocalDate;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 
 /**
  * Design consideration:
  *
- * As far as I can see, OpenCSV does not support bean conversion for the newer Date APIs (e.g. ZonedDateTime). Since we
+ * As far as I can see, OpenCSV does not support bean conversion for the newer Date APIs (e.g. LocalDate). Since we
  * are already in 2019, we should be using the new Date APIs. For this reason, I had to implement a custom bean
- * conversion from a string value to ZonedDateTime.
+ * conversion from a string value to LocalDate.
  *
- * I consider that it is right to couple the ZonedDateTime bean conversion to this domain model because the date format
+ * I consider that it is right to couple the LocalDate bean conversion to this domain model because the date format
  * used in the CSV file would always be tightly coupled to this domain model (e.g. the date format is domain-specific).
  *
  */
@@ -28,7 +26,7 @@ import java.time.format.DateTimeFormatter;
 @EqualsAndHashCode(of = "code", callSuper = false)
 @ToString(of = "code")
 @NoArgsConstructor
-public class Station extends AbstractBeanField<ZonedDateTime> implements Comparable<Station> {
+public class Station extends AbstractBeanField<LocalDate> implements Comparable<Station> {
 
     @CsvBindByName(column = "Station Code", required = true)
     private String code;
@@ -37,7 +35,7 @@ public class Station extends AbstractBeanField<ZonedDateTime> implements Compara
     private String name;
 
     @CsvCustomBindByName(column = "Opening Date", required = true, converter = Station.class)
-    private ZonedDateTime openingDate;
+    private LocalDate openingDate;
 
     private String line;
     private Integer number;
@@ -62,8 +60,8 @@ public class Station extends AbstractBeanField<ZonedDateTime> implements Compara
     }
 
     @Override
-    protected ZonedDateTime convert(String value) {
-        return LocalDate.parse(value, DateTimeFormatter.ofPattern("d MMMM yyyy")).atStartOfDay(ZoneId.systemDefault());
+    protected LocalDate convert(String value) {
+        return LocalDate.parse(value, DateTimeFormatter.ofPattern("d MMMM yyyy"));
     }
 
     @Override
