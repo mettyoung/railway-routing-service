@@ -28,7 +28,7 @@ import java.time.format.DateTimeFormatter;
 @EqualsAndHashCode(of = "code", callSuper = false)
 @ToString(of = "code")
 @NoArgsConstructor
-public class Station extends AbstractBeanField<ZonedDateTime> {
+public class Station extends AbstractBeanField<ZonedDateTime> implements Comparable<Station> {
 
     @CsvBindByName(column = "Station Code", required = true)
     private String code;
@@ -42,13 +42,12 @@ public class Station extends AbstractBeanField<ZonedDateTime> {
     private String line;
 
     public Station(String code, String name) {
-        this.code = code;
+        setCode(code);
         this.name = name;
     }
 
     public Station(String code) {
-        this.code = code;
-        this.name = code;
+        this(code, code);
     }
 
     public void setCode(String code) {
@@ -63,5 +62,14 @@ public class Station extends AbstractBeanField<ZonedDateTime> {
     @Override
     protected ZonedDateTime convert(String value) {
         return LocalDate.parse(value, DateTimeFormatter.ofPattern("d MMMM yyyy")).atStartOfDay(ZoneId.systemDefault());
+    }
+
+    @Override
+    public int compareTo(Station o) {
+        return getCode().compareTo(o.getCode());
+    }
+
+    public boolean sameLineWith(Station otherStation) {
+        return getLine().equals(otherStation.getLine());
     }
 }
