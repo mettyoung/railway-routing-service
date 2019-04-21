@@ -1,5 +1,4 @@
 - hosts: os
-  become: yes
   gather_facts: no
   pre_tasks:
     - name: 'install python2'

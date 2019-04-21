@@ -1,0 +1,43 @@
+- name: Copy artifact
+  copy:
+    src: "{{ webapp_artifact_dir }}/{{ webapp_artifact_name }}"
+    dest: "~"
+  tags:
+    - copy_artifact
+
+- name: Copy docker-compose.yml
+  copy:
+    src: "{{ webapp_artifact_dir }}/docker-compose.yml"
+    dest: "~"
+
+- name: Create app directory
+  become: yes
+  file:
+    path: /var/lib/railway-routing-service
+    state: directory
+    owner: "{{ ansible_user_id }}"
+    group: "{{ ansible_user_id }}"
+
+- name: Copy StationMap.csv
+  copy:
+    src: "{{ webapp_artifact_dir }}/StationMap.csv"
+    dest: "/var/lib/railway-routing-service/"
+
+- name: Remove webapp container
+  docker_service:
+    project_src: '~'
+    state: absent
+
+- name: Remove docker image
+  docker_image:
+    name: "{{ webapp_image }}"
+    state: absent
+
+- name: Load docker image
+  docker_image:
+    name: "{{ webapp_image }}"
+    load_path: "~/{{ webapp_artifact_name }}"
+
+- name: Deploy Web App
+  docker_service:
+    project_src: '~'

@@ -1,0 +1,3 @@
+webapp_artifact_dir: files
+webapp_artifact_name: app.tar
+webapp_container_name: railway-routing-service

@@ -38,7 +38,7 @@ task dockerArchive {
     doLast {
         exec {
             executable "docker"
-            args "save", "-o", "build/docker/app.tar", "${project.group}/${bootJar.getBaseName()}"
+            args "save", "-o", "build/docker/app.tar", "${bootJar.getBaseName()}"
         }
         exec {
             executable "cp"
