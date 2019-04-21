@@ -330,4 +330,42 @@ public class RailwayRoutingServiceTest {
 
         assertThat(paths, hasSize(0));
     }
+
+    @Test
+    public void should_not_traverse_closed_station() {
+        Station one = new Station("NS1", "one");
+        Station two = new Station("NS2", "two");
+        Station three = new Station("NS3", "three");
+        Station four = new Station("NS4", "four", LocalDate.now().plusDays(1));
+        Station five = new Station("NS4", "five");
+
+        Railway railway = new Railway()
+                .addStation(one)
+                .addStation(two)
+                .addStation(three)
+                .addStation(four)
+                .addStation(five)
+                .addConnection(one, two)
+                .addConnection(two, three)
+                .addConnection(two, four)
+                .addConnection(four, five)
+                .addConnection(five, three);
+
+        RailwayRoutingService railwayRoutingService = new RailwayRoutingService(railway);
+        List<RailwayPath> paths = railwayRoutingService.computePaths("one", "three");
+
+        assertThat(paths, hasSize(1));
+        assertThat(paths.get(0).getRailwayEdges(), hasSize(2));
+        assertThat(paths.get(0).getRailwayEdges(), contains(
+                allOf(
+                        hasProperty("startStation", sameInstance(one)),
+                        hasProperty("endStation", sameInstance(two))
+                ),
+                allOf(
+                        hasProperty("startStation", sameInstance(two)),
+                        hasProperty("endStation", sameInstance(three))
+                )
+        ));
+
+    }
 }

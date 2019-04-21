@@ -42,7 +42,7 @@ public class RailwayRoutingService {
             visitedSet.add(current);
 
             for (Station next : railway.getAdjacentStations(current)) {
-                if (!visitedSet.contains(next)) {
+                if (next.isOperational() && !visitedSet.contains(next)) {
                     if (!trail.containsKey(next)) {
                         trail.put(next, new ArrayList<>());
                     }
