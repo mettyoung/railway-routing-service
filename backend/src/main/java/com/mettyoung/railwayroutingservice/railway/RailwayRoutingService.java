@@ -20,12 +20,14 @@ public class RailwayRoutingService {
     }
 
     public List<RailwayPath> computePaths(String originStationName, String targetStationName) {
-        if (originStationName.equals(targetStationName)) {
-            return new ArrayList<>();
-        }
-
         Station origin = railway.findStation(originStationName);
         Station target = railway.findStation(targetStationName);
+
+        if (originStationName.equals(targetStationName)
+                || !origin.isOperational()
+                || !target.isOperational()) {
+            return new ArrayList<>();
+        }
 
         // BFS
         Queue<Station> frontier = new LinkedList<>();

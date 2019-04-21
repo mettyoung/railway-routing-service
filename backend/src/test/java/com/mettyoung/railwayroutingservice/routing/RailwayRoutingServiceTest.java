@@ -6,6 +6,8 @@ import com.mettyoung.railwayroutingservice.railway.RailwayRoutingService;
 import com.mettyoung.railwayroutingservice.railway.Station;
 import org.junit.Test;
 
+import java.time.LocalDate;
+import java.time.ZonedDateTime;
 import java.util.List;
 
 import static org.hamcrest.MatcherAssert.*;
@@ -287,6 +289,44 @@ public class RailwayRoutingServiceTest {
 
         RailwayRoutingService railwayRoutingService = new RailwayRoutingService(railway);
         List<RailwayPath> paths = railwayRoutingService.computePaths("one", "one");
+
+        assertThat(paths, hasSize(0));
+    }
+
+    @Test
+    public void should_provide_no_path_if_origin_station_is_closed() {
+        Station one = new Station("NS1", "one", LocalDate.now().plusDays(1));
+        Station two = new Station("NS2", "two", LocalDate.of(2019, 1, 1));
+        Station three = new Station("NS3", "three", LocalDate.of(2019, 1, 1));
+
+        Railway railway = new Railway()
+                .addStation(one)
+                .addStation(two)
+                .addStation(three)
+                .addConnection(one, two)
+                .addConnection(two, three);
+
+        RailwayRoutingService railwayRoutingService = new RailwayRoutingService(railway);
+        List<RailwayPath> paths = railwayRoutingService.computePaths("one", "three");
+
+        assertThat(paths, hasSize(0));
+    }
+
+    @Test
+    public void should_provide_no_path_if_target_station_is_closed() {
+        Station one = new Station("NS1", "one", LocalDate.of(2019, 1, 1));
+        Station two = new Station("NS2", "two", LocalDate.of(2019, 1, 1));
+        Station three = new Station("NS3", "three", LocalDate.now().plusDays(1));
+
+        Railway railway = new Railway()
+                .addStation(one)
+                .addStation(two)
+                .addStation(three)
+                .addConnection(one, two)
+                .addConnection(two, three);
+
+        RailwayRoutingService railwayRoutingService = new RailwayRoutingService(railway);
+        List<RailwayPath> paths = railwayRoutingService.computePaths("one", "three");
 
         assertThat(paths, hasSize(0));
     }

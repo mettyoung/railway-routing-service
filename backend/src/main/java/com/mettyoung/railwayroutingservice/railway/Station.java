@@ -40,9 +40,14 @@ public class Station extends AbstractBeanField<LocalDate> implements Comparable<
     private String line;
     private Integer number;
 
-    public Station(String code, String name) {
+    public Station(String code, String name, LocalDate openingDate) {
         setCode(code);
         this.name = name;
+        this.openingDate = openingDate;
+    }
+
+    public Station(String code, String name) {
+        this(code, name, LocalDate.now());
     }
 
     public Station(String code) {
@@ -75,5 +80,9 @@ public class Station extends AbstractBeanField<LocalDate> implements Comparable<
 
     public boolean sameLineWith(Station otherStation) {
         return getLine().equals(otherStation.getLine());
+    }
+
+    public boolean isOperational() {
+        return !openingDate.isAfter(LocalDate.now());
     }
 }
