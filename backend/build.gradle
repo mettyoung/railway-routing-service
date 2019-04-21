@@ -29,9 +29,22 @@ task unpack(type: Copy) {
 }
 
 docker {
-    name "${project.group}/${bootJar.getBaseName()}"
+    name "${bootJar.getBaseName()}:${version}"
     copySpec.from(tasks.unpack.outputs).into("dependency")
     buildArgs(['DEPENDENCY': "dependency"])
+}
+
+task dockerArchive {
+    doLast {
+        exec {
+            executable "docker"
+            args "save", "-o", "build/docker/app.tar", "${project.group}/${bootJar.getBaseName()}"
+        }
+        exec {
+            executable "cp"
+            args "build/docker/app.tar", "../devops/roles/webapp/files/"
+        }
+    }
 }
 
 repositories {
