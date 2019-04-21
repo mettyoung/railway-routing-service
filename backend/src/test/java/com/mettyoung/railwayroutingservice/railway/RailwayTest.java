@@ -9,8 +9,8 @@ public class RailwayTest {
 
     @Test
     public void should_be_able_to_get_one_station_from_railway_given_station_name() {
-        Station one = new Station("code", "one");
-        Station two = new Station("two");
+        Station one = new Station("NS1", "one");
+        Station two = new Station("NS2", "two");
 
         Railway railway = new Railway()
                 .addStation(one)
@@ -22,8 +22,8 @@ public class RailwayTest {
 
     @Test
     public void should_be_able_to_create_a_railway_given_two_adjacent_stations() {
-        Station one = new Station("one");
-        Station two = new Station("two");
+        Station one = new Station("NS1");
+        Station two = new Station("NS2");
 
         Railway railway = new Railway()
                 .addStation(one)

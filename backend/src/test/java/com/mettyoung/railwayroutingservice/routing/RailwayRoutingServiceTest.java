@@ -15,9 +15,9 @@ public class RailwayRoutingServiceTest {
 
     @Test
     public void should_provide_a_route_from_start_to_end_given_one_straight_path_of_3_stations() {
-        Station one = new Station("one");
-        Station two = new Station("two");
-        Station three = new Station("three");
+        Station one = new Station("NS1", "one");
+        Station two = new Station("NS2", "two");
+        Station three = new Station("NS3", "three");
         Railway railway = new Railway()
                 .addStation(one)
                 .addStation(two)
@@ -44,11 +44,11 @@ public class RailwayRoutingServiceTest {
 
     @Test
     public void should_provide_a_route_from_start_to_end_given_a_graph_with_two_dead_ends_and_one_path() {
-        Station one = new Station("one");
-        Station two = new Station("two");
-        Station three = new Station("three");
-        Station dangledOne = new Station("dangledOne");
-        Station dangledTwo = new Station("dangledTwo");
+        Station one = new Station( "NS1", "one");
+        Station two = new Station("NS2", "two");
+        Station three = new Station("NS3", "three");
+        Station dangledOne = new Station("EW1", "dangledOne");
+        Station dangledTwo = new Station("EW2", "dangledTwo");
         Railway railway = new Railway()
                 .addStation(one)
                 .addStation(two)
@@ -80,10 +80,10 @@ public class RailwayRoutingServiceTest {
 
     @Test
     public void should_provide_two_routes_from_start_to_end_given_a_graph_with_two_paths() {
-        Station one = new Station("one");
-        Station two = new Station("two");
-        Station three = new Station("three");
-        Station four = new Station("four");
+        Station one = new Station("NS1", "one");
+        Station two = new Station("NS2", "two");
+        Station three = new Station("NS3", "three");
+        Station four = new Station("NS4", "four");
         Railway railway = new Railway()
                 .addStation(one)
                 .addStation(two)
@@ -124,12 +124,12 @@ public class RailwayRoutingServiceTest {
 
     @Test
     public void should_provide_two_routes_from_start_to_end_given_a_graph_with_two_unequal_paths() {
-        Station one = new Station("one");
-        Station two = new Station("two");
-        Station three = new Station("three");
-        Station four = new Station("four");
-        Station five = new Station("five");
-        Station six = new Station("six");
+        Station one = new Station("NS1", "one");
+        Station two = new Station("NS2", "two");
+        Station three = new Station("NS3", "three");
+        Station four = new Station("NS4", "four");
+        Station five = new Station("NS5", "five");
+        Station six = new Station("NS6", "six");
         Railway railway = new Railway()
                 .addStation(one)
                 .addStation(two)
@@ -182,18 +182,18 @@ public class RailwayRoutingServiceTest {
 
     @Test
     public void should_provide_three_routes_from_start_to_end_given_a_graph_with_three_unequal_path_and_two_dead_ends_and_one_cycle() {
-        Station one = new Station("one");
-        Station two = new Station("two");
-        Station three = new Station("three");
-        Station four = new Station("four");
-        Station dangledFour = new Station("dangledFour");
-        Station five = new Station("five");
-        Station six = new Station("six");
-        Station dangledSix = new Station("dangledSix");
-        Station seven = new Station("seven");
-        Station eight = new Station("eight");
-        Station nine = new Station("nine");
-        Station ten = new Station("ten");
+        Station one = new Station("NS1", "one");
+        Station two = new Station("NS2", "two");
+        Station three = new Station("NS3", "three");
+        Station four = new Station("NS4", "four");
+        Station dangledFour = new Station("EW4", "dangledFour");
+        Station five = new Station("NS5", "five");
+        Station six = new Station("NS6", "six");
+        Station dangledSix = new Station("EW6", "dangledSix");
+        Station seven = new Station("NS7", "seven");
+        Station eight = new Station("NS8", "eight");
+        Station nine = new Station("NS9", "nine");
+        Station ten = new Station("NS10", "ten");
 
         Railway railway = new Railway()
                 .addStation(one)
@@ -275,9 +275,9 @@ public class RailwayRoutingServiceTest {
 
     @Test
     public void should_provide_no_path_if_origin_is_same_with_target() {
-        Station one = new Station("one");
-        Station two = new Station("two");
-        Station three = new Station("three");
+        Station one = new Station("NS1", "one");
+        Station two = new Station("NS2", "two");
+        Station three = new Station("NS3", "three");
         Railway railway = new Railway()
                 .addStation(one)
                 .addStation(two)
