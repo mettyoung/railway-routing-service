@@ -1,57 +1,78 @@
 package com.mettyoung.railwayroutingservice.railway.web;
 
+import com.mettyoung.railwayroutingservice.RailwayRoutingServiceApplication;
 import com.mettyoung.railwayroutingservice.railway.Railway;
-import org.hamcrest.core.Every;
-import org.junit.Before;
+import com.mettyoung.railwayroutingservice.railway.Station;
+import com.mettyoung.railwayroutingservice.railway.validator.ExistingStationName;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.validation.ConstraintViolation;
-import javax.validation.Validation;
 import javax.validation.Validator;
-import javax.validation.ValidatorFactory;
+import javax.validation.constraints.NotEmpty;
 import java.util.Set;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.containsInAnyOrder;
-import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.hasProperty;
 import static org.hamcrest.Matchers.hasToString;
+import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 
+@RunWith(SpringRunner.class)
+@SpringBootTest(classes = {RailwayRoutingServiceApplication.class, RouteRequestTest.BeanConfig.class})
 public class RouteRequestTest {
 
-    private Validator validator;
-
-    @Bean
-    Railway railway() {
-        return new Railway();
+    // Inject our own Railway to the Application Context for ease of testing.
+    @Configuration
+    static class BeanConfig {
+        @Bean
+        public Railway railway() {
+            return new Railway()
+                    .addStation(new Station("NS1", "one"))
+                    .addStation(new Station("NS2", "two"));
+        }
     }
 
     @Autowired
-    ApplicationContext context;
+    private Validator validator;
 
-    @Before
-    public void setup() {
-        ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
-        validator = factory.getValidator();
-    }
-
-//    @Test
+    @Test
     public void should_validate_origin_and_target_not_empty() {
         RouteRequest routeRequest = new RouteRequest();
 
         Set<ConstraintViolation<RouteRequest>> violations = validator.validate(routeRequest);
 
-        assertThat(violations, containsInAnyOrder(
+        assertThat(violations, hasItems(
                 hasProperty("propertyPath", hasToString(equalTo("origin"))),
-                hasProperty("propertyPath", hasToString(equalTo("target")))
+                hasProperty("propertyPath", hasToString(equalTo("target"))),
+                hasProperty("constraintDescriptor",
+                        hasProperty("annotationDescriptor",
+                                hasProperty("type", equalTo(NotEmpty.class))))
         ));
+    }
 
-        assertThat(violations, Every.everyItem(
-                hasProperty("messageTemplate", hasToString(containsString("NotEmpty")))
+    @Test
+    public void should_validate_origin_and_target_station_existence() {
+        RouteRequest validRouteRequest = new RouteRequest("one", "two");
+
+        Set<ConstraintViolation<RouteRequest>> violations = validator.validate(validRouteRequest);
+        assertThat(violations, hasSize(0));
+
+        RouteRequest invalidRouteRequest = new RouteRequest("three", "four");
+
+        violations = validator.validate(invalidRouteRequest);
+        assertThat(violations, hasItems(
+                hasProperty("propertyPath", hasToString(equalTo("origin"))),
+                hasProperty("propertyPath", hasToString(equalTo("target"))),
+                hasProperty("constraintDescriptor",
+                        hasProperty("annotationDescriptor",
+                                hasProperty("type", equalTo(ExistingStationName.class))))
         ));
     }
 }
