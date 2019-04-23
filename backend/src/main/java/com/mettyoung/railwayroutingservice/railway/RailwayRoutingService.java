@@ -23,10 +23,6 @@ public class RailwayRoutingService {
         List<Station> origins = railway.findStations(originStationName);
         List<Station> targets = railway.findStations(targetStationName);
 
-        if (origins.get(0).atJunctionWith(targets.get(0))) {
-            return new ArrayList<>();
-        }
-
         // BFS
         Queue<Station> frontier = new LinkedList<>();
         Set<Station> visitedSet = new HashSet<>();
@@ -35,22 +31,24 @@ public class RailwayRoutingService {
         Map<Station, List<Station>> trail = new HashMap<>();
 
         for (Station origin : origins) {
-            frontier.add(origin);
-            while (!frontier.isEmpty()) {
-                Station current = frontier.remove();
-                visitedSet.add(current);
+            if (origin.isOperational()) {
+                frontier.add(origin);
+                while (!frontier.isEmpty()) {
+                    Station current = frontier.remove();
+                    visitedSet.add(current);
 
-                for (Station next : railway.getAdjacentStations(current)) {
-                    boolean junctionStationAtOrigin = origin.atJunctionWith(current) && current.atJunctionWith(next);
-                    if (next.isOperational() && !junctionStationAtOrigin && !visitedSet.contains(next)) {
-                        if (!trail.containsKey(next)) {
-                            trail.put(next, new ArrayList<>());
-                        }
+                    for (Station next : railway.getAdjacentStations(current)) {
+                        boolean junctionStationAtOrigin = origin.atJunctionWith(current) && current.atJunctionWith(next);
+                        if (next.isOperational() && !junctionStationAtOrigin && !visitedSet.contains(next)) {
+                            if (!trail.containsKey(next)) {
+                                trail.put(next, new ArrayList<>());
+                            }
 
-                        if (!targets.get(0).atJunctionWith(next)) {
-                            frontier.add(next);
+                            if (!targets.get(0).atJunctionWith(next)) {
+                                frontier.add(next);
+                            }
+                            trail.get(next).add(current);
                         }
-                        trail.get(next).add(current);
                     }
                 }
             }
@@ -71,7 +69,9 @@ public class RailwayRoutingService {
                     Station end = path.get(i - 1);
                     edges.add(new RailwayEdge(start, end));
                 }
-                paths.add(new RailwayPath(edges));
+                if (!edges.isEmpty()) {
+                    paths.add(new RailwayPath(edges));
+                }
             });
         }
 
