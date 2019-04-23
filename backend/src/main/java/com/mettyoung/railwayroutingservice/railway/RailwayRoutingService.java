@@ -21,11 +21,10 @@ public class RailwayRoutingService {
 
     public List<RailwayPath> computePaths(String originStationName, String targetStationName) {
         Station origin = railway.findStation(originStationName);
-        Station target = railway.findStation(targetStationName);
+        List<Station> targets = railway.findStations(targetStationName);
 
         if (originStationName.equals(targetStationName)
-                || !origin.isOperational()
-                || !target.isOperational()) {
+                || !origin.isOperational()) {
             return new ArrayList<>();
         }
 
@@ -46,7 +45,8 @@ public class RailwayRoutingService {
                     if (!trail.containsKey(next)) {
                         trail.put(next, new ArrayList<>());
                     }
-                    if (!target.equals(next)) {
+
+                    if (!targets.get(0).getName().equals(next.getName())) {
                         frontier.add(next);
                     }
                     trail.get(next).add(current);
@@ -54,22 +54,24 @@ public class RailwayRoutingService {
             }
         }
 
-        return derivePaths(target, trail);
+        return derivePaths(targets, trail);
     }
 
-    private static List<RailwayPath> derivePaths(Station head, Map<Station, List<Station>> tree) {
+    private static List<RailwayPath> derivePaths(List<Station> heads, Map<Station, List<Station>> tree) {
         List<RailwayPath> paths = new ArrayList<>();
-        Stack<Station> trail = new Stack<>();
 
-        getAllPathsFromHeadToLeaves(head, tree, trail, path -> {
-            List<RailwayEdge> edges = new ArrayList<>();
-            for (int i = path.size() - 1; i > 0; i--) {
-                Station start = path.get(i);
-                Station end = path.get(i - 1);
-                edges.add(new RailwayEdge(start, end));
-            }
-            paths.add(new RailwayPath(edges));
-        });
+        for (Station head : heads) {
+            Stack<Station> trail = new Stack<>();
+            getAllPathsFromHeadToLeaves(head, tree, trail, path -> {
+                List<RailwayEdge> edges = new ArrayList<>();
+                for (int i = path.size() - 1; i > 0; i--) {
+                    Station start = path.get(i);
+                    Station end = path.get(i - 1);
+                    edges.add(new RailwayEdge(start, end));
+                }
+                paths.add(new RailwayPath(edges));
+            });
+        }
 
         return paths;
     }
