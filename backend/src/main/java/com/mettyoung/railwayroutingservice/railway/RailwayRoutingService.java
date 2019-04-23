@@ -20,11 +20,10 @@ public class RailwayRoutingService {
     }
 
     public List<RailwayPath> computePaths(String originStationName, String targetStationName) {
-        Station origin = railway.findStation(originStationName);
+        List<Station> origins = railway.findStations(originStationName);
         List<Station> targets = railway.findStations(targetStationName);
 
-        if (originStationName.equals(targetStationName)
-                || !origin.isOperational()) {
+        if (origins.get(0).atJunctionWith(targets.get(0))) {
             return new ArrayList<>();
         }
 
@@ -35,21 +34,24 @@ public class RailwayRoutingService {
         // Path construction
         Map<Station, List<Station>> trail = new HashMap<>();
 
-        frontier.add(origin);
-        while (!frontier.isEmpty()) {
-            Station current = frontier.remove();
-            visitedSet.add(current);
+        for (Station origin : origins) {
+            frontier.add(origin);
+            while (!frontier.isEmpty()) {
+                Station current = frontier.remove();
+                visitedSet.add(current);
 
-            for (Station next : railway.getAdjacentStations(current)) {
-                if (next.isOperational() && !visitedSet.contains(next)) {
-                    if (!trail.containsKey(next)) {
-                        trail.put(next, new ArrayList<>());
-                    }
+                for (Station next : railway.getAdjacentStations(current)) {
+                    boolean junctionStationAtOrigin = origin.atJunctionWith(current) && current.atJunctionWith(next);
+                    if (next.isOperational() && !junctionStationAtOrigin && !visitedSet.contains(next)) {
+                        if (!trail.containsKey(next)) {
+                            trail.put(next, new ArrayList<>());
+                        }
 
-                    if (!targets.get(0).getName().equals(next.getName())) {
-                        frontier.add(next);
+                        if (!targets.get(0).atJunctionWith(next)) {
+                            frontier.add(next);
+                        }
+                        trail.get(next).add(current);
                     }
-                    trail.get(next).add(current);
                 }
             }
         }

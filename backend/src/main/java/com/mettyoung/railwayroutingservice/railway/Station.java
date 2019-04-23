@@ -85,4 +85,8 @@ public class Station extends AbstractBeanField<LocalDate> implements Comparable<
     public boolean isOperational() {
         return !openingDate.isAfter(LocalDate.now());
     }
+
+    public boolean atJunctionWith(Station other) {
+        return name.equals(other.name);
+    }
 }

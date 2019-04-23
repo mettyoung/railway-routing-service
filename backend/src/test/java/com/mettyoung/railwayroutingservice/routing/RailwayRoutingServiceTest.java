@@ -7,11 +7,14 @@ import com.mettyoung.railwayroutingservice.railway.Station;
 import org.junit.Test;
 
 import java.time.LocalDate;
-import java.time.ZonedDateTime;
 import java.util.List;
 
-import static org.hamcrest.MatcherAssert.*;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.allOf;
+import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.hasProperty;
+import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.sameInstance;
 
 public class RailwayRoutingServiceTest {
 
@@ -46,7 +49,7 @@ public class RailwayRoutingServiceTest {
 
     @Test
     public void should_provide_a_route_from_start_to_end_given_a_graph_with_two_dead_ends_and_one_path() {
-        Station one = new Station( "NS1", "one");
+        Station one = new Station("NS1", "one");
         Station two = new Station("NS2", "two");
         Station three = new Station("NS3", "three");
         Station dangledOne = new Station("EW1", "dangledOne");
@@ -412,6 +415,55 @@ public class RailwayRoutingServiceTest {
                 ),
                 allOf(
                         hasProperty("startStation", sameInstance(three)),
+                        hasProperty("endStation", sameInstance(five))
+                )
+        ));
+    }
+
+    @Test
+    public void should_not_traverse_junction_stations_at_origin_station() {
+        Station one = new Station("NS1", "one");
+        Station two = new Station("NS2", "one");
+        Station three = new Station("NS3", "three");
+        Station four = new Station("NS4", "four");
+        Station five = new Station("NS5", "five");
+
+        Railway railway = new Railway()
+                .addStation(one)
+                .addStation(two)
+                .addStation(three)
+                .addStation(four)
+                .addStation(five)
+                .addConnection(one, two)
+                .addConnection(two, four)
+                .addConnection(one, three)
+                .addConnection(three, five)
+                .addConnection(four, five);
+
+        RailwayRoutingService railwayRoutingService = new RailwayRoutingService(railway);
+        List<RailwayPath> paths = railwayRoutingService.computePaths("one", "five");
+
+        assertThat(paths, hasSize(2));
+        assertThat(paths.get(0).getRailwayEdges(), hasSize(2));
+        assertThat(paths.get(0).getRailwayEdges(), contains(
+                allOf(
+                        hasProperty("startStation", sameInstance(one)),
+                        hasProperty("endStation", sameInstance(three))
+                ),
+                allOf(
+                        hasProperty("startStation", sameInstance(three)),
+                        hasProperty("endStation", sameInstance(five))
+                )
+        ));
+
+        assertThat(paths.get(1).getRailwayEdges(), hasSize(2));
+        assertThat(paths.get(1).getRailwayEdges(), contains(
+                allOf(
+                        hasProperty("startStation", sameInstance(two)),
+                        hasProperty("endStation", sameInstance(four))
+                ),
+                allOf(
+                        hasProperty("startStation", sameInstance(four)),
                         hasProperty("endStation", sameInstance(five))
                 )
         ));
