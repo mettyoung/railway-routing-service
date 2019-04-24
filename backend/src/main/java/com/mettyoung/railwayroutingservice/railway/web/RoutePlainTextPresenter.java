@@ -20,7 +20,7 @@ class RoutePlainTextPresenter {
 
         for (RailwayPath path : paths) {
             stringBuilder.append("=================\n");
-            stringBuilder.append(String.format("Stations travelled: %d\n", path.getRailwayEdges().size() + 1));
+            stringBuilder.append(String.format("Stations travelled: %d\n", path.getRailwayEdges().size()));
             stringBuilder.append("Route: (");
 
             StringBuilder detailBuilder = new StringBuilder();
