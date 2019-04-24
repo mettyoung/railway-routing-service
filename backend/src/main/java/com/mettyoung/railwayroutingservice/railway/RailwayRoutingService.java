@@ -11,6 +11,8 @@ import java.util.Set;
 import java.util.Stack;
 import java.util.function.Consumer;
 
+import static java.util.stream.Collectors.toCollection;
+
 public class RailwayRoutingService {
 
     private Railway railway;
@@ -24,33 +26,29 @@ public class RailwayRoutingService {
         List<Station> targets = railway.findStations(targetStationName);
 
         // BFS
-        Queue<Station> frontier = new LinkedList<>();
-        Set<Station> visitedSet = new HashSet<>();
+        Set<String> visitedSet = new HashSet<>();
 
         // Path construction
         Map<Station, List<Station>> trail = new HashMap<>();
+        Queue<Station> frontier = origins.stream().filter(Station::isOperational).collect(toCollection(LinkedList::new));
+        while (!frontier.isEmpty()) {
+            Station current = frontier.remove();
 
-        for (Station origin : origins) {
-            if (origin.isOperational()) {
-                frontier.add(origin);
-                while (!frontier.isEmpty()) {
-                    Station current = frontier.remove();
-                    visitedSet.add(current);
-
-                    for (Station next : railway.getAdjacentStations(current)) {
-                        boolean junctionStationAtOrigin = origin.atJunctionWith(current) && current.atJunctionWith(next);
-                        if (next.isOperational() && !junctionStationAtOrigin && !visitedSet.contains(next)) {
-                            if (!trail.containsKey(next)) {
-                                trail.put(next, new ArrayList<>());
-                            }
-
-                            if (!targets.get(0).atJunctionWith(next)) {
-                                frontier.add(next);
-                            }
-                            trail.get(next).add(current);
-                        }
+            for (Station next : railway.getAdjacentStations(current)) {
+                boolean junctionStationAtOrigin = origins.get(0).atJunctionWith(current) && current.atJunctionWith(next);
+                String edgeCode = current.getCode().compareTo(next.getCode()) < 0? current.getCode() + next.getCode():
+                        next.getCode() + current.getCode();
+                if (next.isOperational() && !junctionStationAtOrigin && !visitedSet.contains(edgeCode)) {
+                    if (!trail.containsKey(next)) {
+                        trail.put(next, new ArrayList<>());
                     }
+
+                    if (!targets.get(0).atJunctionWith(next)) {
+                        frontier.add(next);
+                    }
+                    trail.get(next).add(current);
                 }
+                visitedSet.add(edgeCode);
             }
         }
 

@@ -186,6 +186,64 @@ public class RailwayRoutingServiceTest {
     }
 
     @Test
+    public void should_provide_two_routes_with_a_symmetrical_graph_of_forking_and_joining() {
+        Station one = new Station("NS1", "one");
+        Station two = new Station("NS2", "one");
+        Station three = new Station("NS3", "three");
+        Station four = new Station("NS4", "four");
+        Station five = new Station("NS5", "five");
+        Station six = new Station("NS6", "six");
+        Railway railway = new Railway()
+                .addStation(one)
+                .addStation(two)
+                .addStation(three)
+                .addStation(four)
+                .addStation(five)
+                .addStation(six)
+                .addConnection(one, two)
+                .addConnection(one, three)
+                .addConnection(two, four)
+                .addConnection(three, five)
+                .addConnection(four, five)
+                .addConnection(five, six);
+
+        RailwayRoutingService railwayRoutingService = new RailwayRoutingService(railway);
+        List<RailwayPath> paths = railwayRoutingService.computePaths("one", "six");
+
+        assertThat(paths, hasSize(2));
+        assertThat(paths.get(0).getRailwayEdges(), hasSize(3));
+        assertThat(paths.get(0).getRailwayEdges(), contains(
+                allOf(
+                        hasProperty("startStation", sameInstance(one)),
+                        hasProperty("endStation", sameInstance(three))
+                ),
+                allOf(
+                        hasProperty("startStation", sameInstance(three)),
+                        hasProperty("endStation", sameInstance(five))
+                ),
+                allOf(
+                        hasProperty("startStation", sameInstance(five)),
+                        hasProperty("endStation", sameInstance(six))
+                )
+        ));
+        assertThat(paths.get(1).getRailwayEdges(), hasSize(3));
+        assertThat(paths.get(1).getRailwayEdges(), contains(
+                allOf(
+                        hasProperty("startStation", sameInstance(two)),
+                        hasProperty("endStation", sameInstance(four))
+                ),
+                allOf(
+                        hasProperty("startStation", sameInstance(four)),
+                        hasProperty("endStation", sameInstance(five))
+                ),
+                allOf(
+                        hasProperty("startStation", sameInstance(five)),
+                        hasProperty("endStation", sameInstance(six))
+                )
+        ));
+    }
+
+    @Test
     public void should_provide_three_routes_from_start_to_end_given_a_graph_with_three_unequal_path_and_two_dead_ends_and_one_cycle() {
         Station one = new Station("NS1", "one");
         Station two = new Station("NS2", "two");
