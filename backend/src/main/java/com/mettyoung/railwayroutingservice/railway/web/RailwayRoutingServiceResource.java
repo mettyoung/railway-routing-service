@@ -2,6 +2,7 @@ package com.mettyoung.railwayroutingservice.railway.web;
 
 import com.mettyoung.railwayroutingservice.railway.RailwayPath;
 import com.mettyoung.railwayroutingservice.railway.RailwayRoutingService;
+import com.mettyoung.railwayroutingservice.routing.StationTravelledHeuristic;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,6 +21,7 @@ public class RailwayRoutingServiceResource {
     @GetMapping("/compute-path")
     public String computePath(@Valid RouteRequest routeRequest) {
         List<RailwayPath> railwayPaths = railwayRoutingService.computePaths(routeRequest.getOrigin(), routeRequest.getTarget());
+        railwayPaths.sort(new StationTravelledHeuristic());
         return RoutePlainTextPresenter.present(routeRequest, railwayPaths);
     }
 }
