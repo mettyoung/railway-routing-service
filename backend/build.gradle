@@ -7,11 +7,13 @@ buildscript {
 plugins {
     id 'org.springframework.boot' version '2.1.4.RELEASE'
     id 'java'
+    id "com.moowork.node" version "1.3.1"
 }
 
 apply plugin: 'io.spring.dependency-management'
 apply plugin: 'com.palantir.docker'
 
+def frontendDir = '../frontend'
 group = 'com.mettyoung'
 version = '1.0.0'
 sourceCompatibility = '1.8'
@@ -27,6 +29,26 @@ task unpack(type: Copy) {
     from(zipTree(tasks.bootJar.outputs.files.singleFile))
     into("build/dependency")
 }
+
+sourceSets.main {
+    resources.srcDirs += "$frontendDir/build"
+}
+
+node {
+    version = "10.5.0"
+    nodeModulesDir = file(frontendDir)
+    download = true
+}
+
+task installFrontend(type: NpmTask) {
+    args = ['install']
+}
+
+task buildFrontend(type: NpmTask, dependsOn: installFrontend) {
+    args = ['run', 'build']
+}
+
+tasks.build.dependsOn buildFrontend
 
 docker {
     name "${bootJar.getBaseName()}:${version}"
