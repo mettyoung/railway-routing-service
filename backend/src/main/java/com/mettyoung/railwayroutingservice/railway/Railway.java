@@ -2,6 +2,7 @@ package com.mettyoung.railwayroutingservice.railway;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -13,8 +14,8 @@ public class Railway {
     private Map<String, List<Station>> stationsByName;
 
     public Railway() {
-        adjacencyList = new HashMap<>();
-        stationsByName = new HashMap<>();
+        adjacencyList = new LinkedHashMap<>();
+        stationsByName = new LinkedHashMap<>();
     }
 
     public Railway addStation(Station station) {
