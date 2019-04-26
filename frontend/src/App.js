@@ -110,9 +110,9 @@ export default class App extends Component {
       return (
         <Card>
           <Card.Header>
-            <Card.Link href="#" onClick={this.previousPage}>Previous</Card.Link>
-            <Card.Link href="#" onClick={this.nextPage}>Next</Card.Link>
-            <span className="float-right text-muted small">Page {this.state.page + 1} of {this.state.total}</span>
+            <Card.Link href="javascript:void(0)" onClick={this.previousPage}>Previous</Card.Link>
+            <Card.Link href="javascript:void(0)" onClick={this.nextPage}>Next</Card.Link>
+            <span className="float-right text-muted small">{this.state.page + 1} of {this.state.total}</span>
           </Card.Header>
           <Card.Body className="mt-xl-2">
             <Card.Title>Stations Travelled: {edges.length}</Card.Title>
@@ -139,7 +139,7 @@ export default class App extends Component {
       return (
         <Card className="mt-md-4">
           <Card.Header>
-            <span className="float-right text-muted small">Page 0 of 0</span>
+            <span className="float-right text-muted small">0 of 0</span>
           </Card.Header>
           <Card.Body className="m-auto">
             <Card.Title className="m-auto">No path generated</Card.Title>
@@ -150,17 +150,19 @@ export default class App extends Component {
   }
 
   componentDidMount() {
+    const error = null;
     RailwayService.getStations()
-      .then(stations => this.setState({stations}))
+      .then(stations => this.setState({error, stations}))
       .catch(error => this.setState({error: error.toString()}));
   }
 
   handleSubmit(event) {
+    const error = null;
     event.preventDefault();
 
     this.setState({loading: true});
     RailwayService.computePaths(this.state.origin, this.state.target)
-      .then(paths => this.setState({paths, total: paths.length}))
+      .then(paths => this.setState({error, paths, total: paths.length}))
       .catch(error => this.setState({error: error.toString()}))
       .then(() => this.setState({loading: false}));
   }
