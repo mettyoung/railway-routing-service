@@ -10,8 +10,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.util.ResourceUtils;
 
-import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
 import java.util.List;
 
 @Configuration
@@ -22,10 +23,11 @@ public class DomainConfig {
 
     @Bean
     public Railway buildRailway() throws IOException {
-        File file = ResourceUtils.getFile(csvPath);
-        List<Station> stations = CsvToBeanParser.parseCsvToBean(file, Station.class);
-
-        return RailwayFactory.buildRailway(stations);
+        URL url = ResourceUtils.getURL(csvPath);
+        try (InputStream inputStream = url.openStream()) {
+            List<Station> stations = CsvToBeanParser.parseCsvToBean(inputStream, Station.class);
+            return RailwayFactory.buildRailway(stations);
+        }
     }
 
     @Bean

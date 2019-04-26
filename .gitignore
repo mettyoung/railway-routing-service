@@ -3,3 +3,4 @@ app.tar
 .DS_Store
 .vagrant
 .idea/
+.gradle/

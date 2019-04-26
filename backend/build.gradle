@@ -24,14 +24,10 @@ configurations {
     }
 }
 
-task unpack(type: Copy) {
-    dependsOn bootJar
-    from(zipTree(tasks.bootJar.outputs.files.singleFile))
-    into("build/dependency")
-}
-
-sourceSets.main {
-    resources.srcDirs += "$frontendDir/build"
+processResources {
+    from("$frontendDir/build") {
+        into 'static'
+    }
 }
 
 node {
@@ -52,8 +48,8 @@ tasks.build.dependsOn buildFrontend
 
 docker {
     name "${bootJar.getBaseName()}:${version}"
-    copySpec.from(tasks.unpack.outputs).into("dependency")
-    buildArgs(['DEPENDENCY': "dependency"])
+    copySpec.from(tasks.bootJar.outputs).into("dependency")
+    buildArgs(['JAR_FILE': "dependency/${bootJar.getArchiveName()}"])
 }
 
 task dockerArchive {
