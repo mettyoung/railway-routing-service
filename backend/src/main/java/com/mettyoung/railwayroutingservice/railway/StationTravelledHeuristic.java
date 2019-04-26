@@ -1,6 +1,4 @@
-package com.mettyoung.railwayroutingservice.routing;
-
-import com.mettyoung.railwayroutingservice.railway.RailwayPath;
+package com.mettyoung.railwayroutingservice.railway;
 
 import java.util.Comparator;
 

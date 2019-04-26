@@ -16,7 +16,7 @@ import java.net.URL;
 import java.util.List;
 
 @Configuration
-public class DomainConfig {
+public class AppConfig {
 
     @Value("${railway.csvPath:classpath:StationMap.csv}")
     private String csvPath;

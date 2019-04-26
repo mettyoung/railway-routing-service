@@ -4,14 +4,13 @@ import com.opencsv.bean.CsvToBean;
 import com.opencsv.bean.CsvToBeanBuilder;
 import com.opencsv.bean.HeaderColumnNameMappingStrategy;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.List;
 
 public class CsvToBeanParser {
 
-    public static <T> List<T> parseCsvToBean(InputStream inputStream, Class<T> beanType) throws IOException {
+    public static <T> List<T> parseCsvToBean(InputStream inputStream, Class<T> beanType) {
         final HeaderColumnNameMappingStrategy<T> strategy = new HeaderColumnNameMappingStrategy<>();
         strategy.setType(beanType);
 

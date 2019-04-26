@@ -3,6 +3,7 @@ package com.mettyoung.railwayroutingservice.routing;
 import com.mettyoung.railwayroutingservice.railway.RailwayEdge;
 import com.mettyoung.railwayroutingservice.railway.RailwayPath;
 import com.mettyoung.railwayroutingservice.railway.Station;
+import com.mettyoung.railwayroutingservice.railway.StationTravelledHeuristic;
 import org.junit.Test;
 
 import java.util.Arrays;
