@@ -7,6 +7,6 @@ services:
     environment:
       RAILWAY_CSVPATH: /var/lib/railway-routing-service/StationMap.csv
     ports:
-      - 8080:8080
+      - 80:8080
     volumes:
       - /var/lib/railway-routing-service:/var/lib/railway-routing-service
