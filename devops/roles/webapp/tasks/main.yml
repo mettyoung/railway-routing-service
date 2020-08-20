@@ -24,7 +24,7 @@
     dest: "/var/lib/railway-routing-service/"
 
 - name: Remove webapp container
-  docker_service:
+  docker_compose:
     project_src: '~'
     state: absent
 
@@ -36,8 +36,9 @@
 - name: Load docker image
   docker_image:
     name: "{{ webapp_image }}"
+    source: load
     load_path: "~/{{ webapp_artifact_name }}"
 
 - name: Deploy Web App
-  docker_service:
+  docker_compose:
     project_src: '~'

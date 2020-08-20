@@ -22,6 +22,7 @@
 
 - name: Installing docker compose
   pip:
+    executable: pip3
     name: docker-compose
     state: present
 

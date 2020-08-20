@@ -4,3 +4,4 @@ app.tar
 .vagrant
 .idea/
 .gradle/
+bin/
